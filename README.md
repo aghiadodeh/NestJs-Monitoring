@@ -4,6 +4,15 @@ Debug assistant for the **NestJS** framework. It provides insight into the **Req
 ## NOTE:
 This Package works only with ***Mongoose*** and ***Sequelize***.
 
+## Screenshots:
+<!--
+| | |
+|:-------------------------:|:-------------------------:|
+|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Analyze.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Requests.png?raw=true">
+|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Request_Exception.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/DB.png?raw=true">
+|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Job.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Request_Details.png?raw=true">
+-->
+
 ## Installation:
 ```shell
 npm i nestjs-monitoring
@@ -13,13 +22,6 @@ npm i nestjs-monitoring
 **NestJs Monitoring** provide debugging through ***apis***, You can use it by:
 1. Use built-in package dashboard by accessing: `http://localhost:3000/monitoring`.
 2. Clone [Github](https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard) which built specifically for this package.
-
-## Screenshots:
-| | |
-|:-------------------------:|:-------------------------:|
-|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Analyze.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Requests.png?raw=true">
-|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Request_Exception.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/DB.png?raw=true">
-|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Job.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Request_Details.png?raw=true">
 
 
 ## Setup:
@@ -145,7 +147,7 @@ interface ICreateJob {
 Logs take up a lot of storage space in a database, so you have to clear logs every period of time:
 
 ```typescript
-import { MongooseMonitoringJobService } from "@app/mentoring";
+import { MongooseMonitoringJobService } from "nestjs-monitoring";
 import { Injectable } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
@@ -187,6 +189,28 @@ import { MonitoringModule } from "nestjs-monitoring";
 })
 export class AppModule {}
 ```
+
+Add Sequelize Models to your SequelizeModule
+```typescript
+import { SequelizeModule } from '@nestjs/sequelize';
+import { SequelizeJobLog, SequelizeRequestLog, SequelizeDBLog } from "nestjs-monitoring";
+
+export const sequelizeModule = () => SequelizeModule.forRoot({
+    dialect: 'mysql',
+    host: process.env.DB_HOST,
+    port: +process.env.DB_PORT,
+    // ...
+    models: [
+        // add models here
+        SequelizeRequestLog,
+        SequelizeJobLog,
+        SequelizeDBLog,
+        // ...
+    ],
+    // ...
+});
+```
+
 ## Jobs Log:
 
 You can create your own job for background operations:
@@ -232,7 +256,7 @@ interface ICreateJob {
 Logs take up a lot of storage space in a database, so you have to clear logs every period of time:
 
 ```typescript
-import { SequelizeMonitoringJobService } from "@app/mentoring";
+import { SequelizeMonitoringJobService } from "nestjs-monitoring";
 import { Injectable } from "@nestjs/common";
 import { Cron, CronExpression } from "@nestjs/schedule";
 
