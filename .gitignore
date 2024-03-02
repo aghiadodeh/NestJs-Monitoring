@@ -1,6 +1,5 @@
 node_modules
 .history
 dist
-.npmignore
 package-lock.json
 README

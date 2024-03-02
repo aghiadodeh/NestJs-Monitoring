@@ -28,7 +28,7 @@
   "types": "dist/index",
   "scripts": {
     "build": "rimraf dist && tsc",
-    "prepublish": "npm run build"
+    "publish": "npm publish --access public"
   },
   "author": "Aghiad Odeh",
   "license": "ISC",

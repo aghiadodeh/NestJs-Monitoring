@@ -5,13 +5,13 @@ Debug assistant for the **NestJS** framework. It provides insight into the **Req
 This Package works only with ***Mongoose*** and ***Sequelize***.
 
 ## Screenshots:
-<!--
+
 | | |
 |:-------------------------:|:-------------------------:|
 |<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Analyze.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Requests.png?raw=true">
 |<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Request_Exception.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/DB.png?raw=true">
 |<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Job.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Request_Details.png?raw=true">
--->
+
 
 ## Installation:
 ```shell
