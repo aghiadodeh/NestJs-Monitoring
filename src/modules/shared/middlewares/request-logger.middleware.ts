@@ -13,7 +13,6 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
     abstract create(data: any): Promise<void>;
 
     protected async saveLog(req: Request, res: Response): Promise<void> {
-        if (process.env.MONITORING_REQUEST_SAVE_ENABLED != 'true') return;
         if (req.originalUrl.includes('monitoring/')) return;
         
         const request = {

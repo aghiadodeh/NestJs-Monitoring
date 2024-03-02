@@ -20,7 +20,7 @@ const mongooseSchemas = MongooseModule.forFeature([
 @Module({})
 export class MongooseMonitoringModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
-    if (process.env.MONITORING_REQUEST_LOG_ENABLED == 'true') {
+    if (process.env.MONITORING_REQUEST_SAVE_ENABLED == 'true') {
       consumer.apply(MongooseRequestLoggerMiddleware).forRoutes('*');
     }
   }

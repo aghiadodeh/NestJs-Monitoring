@@ -39,7 +39,7 @@ MONITORING_AUTH_REQUIRED = 'true'
 # authentication credentials
 MONITORING_USERNAME = 'monitoring'
 MONITORING_PASSWORD = '123456'
-MONITORING_JWT_SECRET = 'qXgTE2G*0FLli8&qgT52!5IR0js9&SOMB%rW'
+MONITORING_JWT_SECRET = '*******' # change with strong secret-key
 
 # log all db queries in console
 MONITORING_DB_LOG_ENABLED = 'true'
