@@ -255,5 +255,5 @@ export class LogsCronJob {
 | Analyze Requests    | {{baseUrl}}/api/monitoring/sequelize/requests/analyze    |
 | Requests Log    | {{baseUrl}}/api/monitoring/sequelize/requests    |
 | Jobs Log    | {{baseUrl}}/api/monitoring/sequelize/jobs    |
-| Database Queries Log    | {{baseUrl}}/api/monitoring/sequelize/mongo-logs    |
+| Database Queries Log    | {{baseUrl}}/api/monitoring/sequelize/db-logs    |
 <hr />
