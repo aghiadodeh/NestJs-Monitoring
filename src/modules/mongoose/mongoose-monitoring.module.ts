@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
+import { DynamicModule, MiddlewareConsumer, Module, NestModule, Type } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { RequestLog, RequestLogSchema } from './entites/request-log.entity';
 import { MongooseRequestLoggerMiddleware } from './middlewares/mongoose-request-logger.middleware';
@@ -17,35 +17,46 @@ const mongooseSchemas = MongooseModule.forFeature([
   { name: MongooseLog.name, schema: MongooseLogSchema },
 ]);
 
-@Module({
-  imports: [
-    mongooseSchemas,
-    MongooseAnalyzeModule,
-    MonitoringAuthenticationModule,
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, 'browser'),
-      exclude: ['/api/(.*)'],
-      serveRoot: '/monitoring'
-    }),
-  ],
-  providers: [
-    MongooseMonitoringDbService,
-    MongooseMonitoringJobService,
-    MongooseRequestLoggerMiddleware,
-  ],
-  exports: [
-    mongooseSchemas,
-    MongooseAnalyzeModule,
-    MongooseMonitoringDbService,
-    MongooseMonitoringJobService,
-    MonitoringAuthenticationModule,
-    MongooseRequestLoggerMiddleware,
-  ],
-})
+@Module({})
 export class MongooseMonitoringModule implements NestModule {
   configure(consumer: MiddlewareConsumer): void {
     if (process.env.MONITORING_REQUEST_LOG_ENABLED == 'true') {
       consumer.apply(MongooseRequestLoggerMiddleware).forRoutes('*');
+    }
+  }
+
+  static forRoot(): DynamicModule {
+    const imports: any[] = [];
+
+    if (process.env.MONITORING_DASHBOARD_ENABLED != 'false') {
+      imports.push(ServeStaticModule.forRoot({
+        rootPath: join(__dirname, 'browser'),
+        exclude: ['/api/(.*)'],
+        serveRoot: '/monitoring'
+      }));
+    }
+
+    return {
+      imports: [
+        ...imports,
+        mongooseSchemas,
+        MongooseAnalyzeModule,
+        MonitoringAuthenticationModule,
+      ],
+      providers: [
+        MongooseMonitoringDbService,
+        MongooseMonitoringJobService,
+        MongooseRequestLoggerMiddleware,
+      ],
+      exports: [
+        mongooseSchemas,
+        MongooseAnalyzeModule,
+        MongooseMonitoringDbService,
+        MongooseMonitoringJobService,
+        MonitoringAuthenticationModule,
+        MongooseRequestLoggerMiddleware,
+      ],
+      module: MongooseMonitoringModule,
     }
   }
 }

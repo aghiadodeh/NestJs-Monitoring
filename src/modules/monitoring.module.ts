@@ -13,11 +13,11 @@ interface MonitoringOptions {
 export class MonitoringModule {
   static forRoot(options: MonitoringOptions): DynamicModule {
     const orm = options?.orm ?? 'mongoose';
-    const imports: Type[] = [];
+    const imports: any[] = [];
     if (orm == 'mongoose') {
-      imports.push(MongooseMonitoringModule);
+      imports.push(MongooseMonitoringModule.forRoot());
     } else {
-      imports.push(SequelizeMonitoringModule);
+      imports.push(SequelizeMonitoringModule.forRoot());
     }
     
     return {

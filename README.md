@@ -27,8 +27,11 @@ npm i nestjs-monitoring
 ## Setup:
 package can be managed by `.env` file
 ```env
-# save all requests traffic
-MONITORING_REQUEST_LOG_ENABLED = 'true'
+# enable call monitoring apis (you can disable it in production environment)
+MONITORING_APIS_ENABLED = 'true'
+
+# enable monitoring with browser (dashboard)
+MONITORING_DASHBOARD_ENABLED = 'true'
 
 # require authentication to get monitoring data
 MONITORING_AUTH_REQUIRED = 'true'
@@ -36,7 +39,7 @@ MONITORING_AUTH_REQUIRED = 'true'
 # authentication credentials
 MONITORING_USERNAME = 'monitoring'
 MONITORING_PASSWORD = '123456'
-MONITORING_JWT_SECRET = '**********' # change with strong secret-key
+MONITORING_JWT_SECRET = 'qXgTE2G*0FLli8&qgT52!5IR0js9&SOMB%rW'
 
 # log all db queries in console
 MONITORING_DB_LOG_ENABLED = 'true'
@@ -44,7 +47,7 @@ MONITORING_DB_LOG_ENABLED = 'true'
 # save all db queries
 MONITORING_DB_LOG_SAVE_ENABLED = 'true'
 
-# save all requests traffic in server
+# save all requests traffic in application
 MONITORING_REQUEST_SAVE_ENABLED = 'true'
 ```
 
