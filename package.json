@@ -1,0 +1,83 @@
+{
+  "name": "nestjs-monitoring",
+  "version": "1.0.0",
+  "description": "debug assistant for the NestJS framework. It provides insight into the requests coming into your application, exceptions, database queries and Jobs",
+  "keywords": [
+    "NestJS",
+    "monitoring",
+    "mongoose",
+    "sequelize",
+    "database queries",
+    "requests log",
+    "exceptions log",
+    "jobs log"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aghiadodeh/Nestjs-Monitoring.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aghiadodeh/Nestjs-Monitoring/issues"
+  },
+  "homepage": "https://github.com/aghiadodeh/Nestjs-Monitoring#readme",
+  "main": "dist/index",
+  "types": "dist/index",
+  "scripts": {
+    "build": "rimraf dist && tsc",
+    "prepublish": "npm run build"
+  },
+  "author": "Aghiad Odeh",
+  "license": "ISC",
+  "dependencies": {
+    "@nestjs/common": "^10.3.3",
+    "@nestjs/core": "^10.3.3",
+    "@nestjs/jwt": "^10.2.0",
+    "@nestjs/mongoose": "^10.0.4",
+    "@nestjs/passport": "^10.0.3",
+    "@nestjs/sequelize": "^10.0.1",
+    "@nestjs/serve-static": "^4.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "moment-timezone": "^0.5.45",
+    "mongoose": "^8.1.3",
+    "mysql2": "^3.9.2",
+    "nestjs-i18n": "^10.4.5",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "rxjs": "^7.8.1",
+    "sequelize": "^6.37.1",
+    "sequelize-typescript": "^2.1.6"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "^10.3.3",
+    "@nestjs/core": "^10.3.3",
+    "@nestjs/jwt": "^10.2.0",
+    "@nestjs/mongoose": "^10.0.4",
+    "@nestjs/passport": "^10.0.3",
+    "@nestjs/sequelize": "^10.0.1",
+    "@nestjs/serve-static": "^4.0.1",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.1",
+    "moment-timezone": "^0.5.45",
+    "mongoose": "^8.1.3",
+    "mysql2": "^3.9.2",
+    "nestjs-i18n": "^10.4.5",
+    "passport": "^0.7.0",
+    "passport-jwt": "^4.0.1",
+    "rxjs": "^7.8.1",
+    "sequelize": "^6.37.1",
+    "sequelize-typescript": "^2.1.6"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/moment-timezone": "^0.5.30",
+    "@types/node": "^20.11.19",
+    "@types/sequelize": "^4.28.20",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.3.3"
+  }
+}
