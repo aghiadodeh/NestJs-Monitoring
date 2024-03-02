@@ -9,7 +9,10 @@ This Package works only with ***Mongoose*** and ***Sequelize***.
 npm i nestjs-monitoring
 ```
 
-**NestJs Monitoring** provide debugging through ***apis***, You can use this dashboard from [Github](https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard) which built specifically for this package.
+## Usage:
+**NestJs Monitoring** provide debugging through ***apis***, You can use it by:
+1- Use built-in package dashboard by accessing: `http://localhost:3000/monitoring`.
+2- Clone [Github](https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard) which built specifically for this package.
 
 ## Screenshots:
 Github [Dashboard](https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard):
