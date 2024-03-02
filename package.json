@@ -1,6 +1,6 @@
 {
   "name": "nestjs-monitoring",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "debug assistant for the NestJS framework. It provides insight into the requests coming into your application, exceptions, database queries and Jobs",
   "keywords": [
     "NestJS",

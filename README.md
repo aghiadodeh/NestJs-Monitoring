@@ -21,7 +21,7 @@ npm i nestjs-monitoring
 ## Usage:
 **NestJs Monitoring** provide debugging through ***apis***, You can use it by:
 1. Use built-in package dashboard by accessing: `http://localhost:3000/monitoring`.
-2. Clone [Github](https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard) which built specifically for this package.
+2. Clone [Monitoring-Dashboard](https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard) from Github which built specifically for this package.
 
 
 ## Setup:
