@@ -24,7 +24,7 @@ npm i nestjs-monitoring
 
 ## Setup:
 package can be managed by `.env` file
-```
+```env
 # save all requests traffic
 MONITORING_REQUEST_LOG_ENABLED = 'true'
 
