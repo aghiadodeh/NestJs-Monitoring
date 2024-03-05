@@ -1,6 +1,7 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import moment from 'moment-timezone';
+import formidable from "formidable";
 
 @Injectable()
 export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
@@ -14,7 +15,18 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
 
     protected async saveLog(req: Request, res: Response): Promise<void> {
         if (req.originalUrl.includes('monitoring/')) return;
-        
+
+        let body = req.body;
+        try {
+            if (req.headers['content-type']?.toLocaleLowerCase().includes('multipart/form-data')) {
+                const form = new formidable.IncomingForm();
+                const request = await form.parse(req);
+                const fields = request[0];
+                const files = request[1];
+                body = { files, fields };
+            }
+        } catch (_) { }
+
         const request = {
             ip: req.ip,
             headers: req.headers,
@@ -22,7 +34,7 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
             method: req.method,
             params: req.params,
             queries: req.query,
-            body: req.body,
+            body: body,
             datetime: moment().toISOString(),
             date: new Date(),
         };

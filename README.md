@@ -2,7 +2,7 @@
 Debug assistant for the **NestJS** framework. It provides insight into the **Requests** coming into your application, **Exceptions**, **Database queries** and **Jobs**
 
 ## NOTE:
-This Package works only with ***Mongoose*** and ***Sequelize***.
+- This Package works only with ***Mongoose*** and ***Sequelize***.
 
 ## Screenshots:
 
@@ -27,7 +27,7 @@ npm i nestjs-monitoring
 ## Setup:
 package can be managed by `.env` file
 ```env
-# enable call monitoring apis (you can disable it in production environment)
+# enable call monitoring apis (ex: disable it in production environment)
 MONITORING_APIS_ENABLED = 'true'
 
 # enable monitoring with browser (dashboard)
@@ -91,7 +91,7 @@ This package use [NestJs-i18n](https://www.npmjs.com/package/nestjs-i18n) for tr
     │   └── main.ts               
     └── ...
  
-## Setup Mongoose:
+## Setup Mongoose Monitoring:
 
 add `MonitoringModule` to your `src/app.module.ts`:
 ```typescript
@@ -105,7 +105,7 @@ import { MonitoringModule } from "nestjs-monitoring";
 })
 export class AppModule {}
 ```
-## Jobs Log:
+## Save Job Logs Manually:
 
 You can create your own job for background operations:
 ```typescript
@@ -178,7 +178,7 @@ export class LogsCronJob {
 <hr />
 
  
-## Setup Sequelize:
+## Setup Sequelize Monitoring:
 
 add `MonitoringModule` to your `src/app.module.ts`:
 ```typescript
@@ -193,7 +193,7 @@ import { MonitoringModule } from "nestjs-monitoring";
 export class AppModule {}
 ```
 
-Add Sequelize Models to your SequelizeModule
+Add Sequelize Models to your SequelizeModule:
 ```typescript
 import { SequelizeModule } from '@nestjs/sequelize';
 import { SequelizeJobLog, SequelizeRequestLog, SequelizeDBLog } from "nestjs-monitoring";
@@ -214,7 +214,7 @@ export const sequelizeModule = () => SequelizeModule.forRoot({
 });
 ```
 
-## Jobs Log:
+## Save Job Logs Manually:
 
 You can create your own job for background operations:
 ```typescript

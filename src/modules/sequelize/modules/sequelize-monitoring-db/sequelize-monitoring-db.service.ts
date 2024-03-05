@@ -42,6 +42,7 @@ export class SequelizeMonitoringDbService {
                         Object.keys(options).forEach(key => options[key] === undefined ? delete options[key] : {});
                         let table: string = null;
                         try {
+                            delete options.password;
                             if (Array.isArray(timing.tableNames)) {
                                 if (timing.tableNames.length == 1) {
                                     table = timing.tableNames[0];
