@@ -1,7 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
 import moment from 'moment-timezone';
-import formidable from "formidable";
 
 @Injectable()
 export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
@@ -15,17 +14,21 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
 
     protected async saveLog(req: Request, res: Response): Promise<void> {
         if (req.originalUrl.includes('monitoring/')) return;
-
+        const now = new Date();
         let body = req.body;
+
+        const response = {
+            ...(await this.getResponse(res)).body,
+            datetime: moment().toISOString(),
+        };
+
         try {
             if (req.headers['content-type']?.toLocaleLowerCase().includes('multipart/form-data')) {
-                const form = new formidable.IncomingForm();
-                const request = await form.parse(req);
-                const fields = request[0];
-                const files = request[1];
-                body = { files, fields };
+                body = res['req'].body;
             }
-        } catch (_) { }
+        } catch (error) {
+            console.warn('BaseRequestLoggerMiddleware', error);
+        }
 
         const request = {
             ip: req.ip,
@@ -36,14 +39,8 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
             queries: req.query,
             body: body,
             datetime: moment().toISOString(),
-            date: new Date(),
+            date: now,
         };
-
-        const response = {
-            ...(await this.getResponse(res)).body,
-            datetime: moment().toISOString(),
-        };
-
 
         const diff = moment(new Date()).diff(request.date, 'milliseconds');
         const duration = moment.duration(diff, 'milliseconds');
