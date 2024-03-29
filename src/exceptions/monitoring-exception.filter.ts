@@ -16,6 +16,7 @@ export class MonitoringExceptionFilter implements ExceptionFilter {
             try {
                 const stack = exception['stack'];
                 response['stack'] = stack;
+                console.log(stack);
             } catch (_) {}
         }
 
@@ -24,6 +25,7 @@ export class MonitoringExceptionFilter implements ExceptionFilter {
             data: null,
             message,
             success: false,
+            error: exception.cause ?? undefined,
         });
     }
 }
