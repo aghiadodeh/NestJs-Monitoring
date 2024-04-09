@@ -232,6 +232,6 @@ export class SequelizeMonitoringAnalyzeService extends MonitoringService {
             }
         }
 
-        return { fromDate, toDate, total, success, exceptions, duration, durationURLs, createdAt }
+        return { fromDate, toDate, total, success, exceptions, duration, durationURLs, createdAt, durationBoundaries }
     }
 }

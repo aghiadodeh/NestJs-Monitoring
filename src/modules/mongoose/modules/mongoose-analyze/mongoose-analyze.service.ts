@@ -166,13 +166,14 @@ export class MongooseAnalyzeService extends MonitoringService {
         });
 
         // requests durations
+        const durationBoundaries = [0, 20, 40, 80, 130, 150, 180, 200, 500, 1000, 2000];
         const duration = await this.requestLog.aggregate([
             { $match: condition },
             { $project: { duration: 1, url: 1, method: 1, success: 1, 'response.statusCode': 1 } },
             {
                 $bucket: {
                     groupBy: "$duration",
-                    boundaries: [0, 20, 60, 100, 130, 150, 180, 200, 500, 1000, 2000],
+                    boundaries: durationBoundaries,
                     default: 1000000,
                     output: {
                         count: { $sum: 1 },
@@ -237,6 +238,6 @@ export class MongooseAnalyzeService extends MonitoringService {
             }
         ]);
 
-        return { fromDate, toDate, total, success, exceptions, duration, durationURLs, createdAt }
+        return { fromDate, toDate, total, success, exceptions, duration, durationURLs, createdAt, durationBoundaries }
     }
 }
