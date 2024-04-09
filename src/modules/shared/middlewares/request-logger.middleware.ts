@@ -16,6 +16,9 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
         if (req.originalUrl.includes('monitoring/')) return;
         const now = new Date();
         let body = req.body;
+        if (!req.headers["cache-control"]) {
+            req.headers["cache-control"] = "no-cache";
+        }
 
         const response = {
             ...(await this.getResponse(res)).body,
