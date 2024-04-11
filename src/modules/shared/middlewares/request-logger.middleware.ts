@@ -30,7 +30,7 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
                 body = res['req'].body;
             }
         } catch (error) {
-            console.warn('BaseRequestLoggerMiddleware', error);
+            console.error('BaseRequestLoggerMiddleware', error);
         }
 
         const request = {
@@ -41,7 +41,7 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
             params: req.params,
             queries: req.query,
             body: body,
-            datetime: moment().toISOString(),
+            datetime: now,
             date: now,
         };
 
