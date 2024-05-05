@@ -4,3 +4,4 @@ src/
 .gitignore
 .history
 client/
+temp/
