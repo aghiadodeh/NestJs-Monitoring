@@ -187,13 +187,18 @@ export class SequelizeMonitoringAnalyzeService extends MonitoringService {
             methods.forEach(method => {
                 const urls = durations.filter(e => `${e.url}`.split("?")[0] == obj && e.method == method);
                 const success = urls.filter(e => e.success == true);
+                const min = success.length == 0 ? 0 : success.map(e => e.duration).reduce((a, b) => Math.min(a, b));
+                const max = success.length == 0 ? 0 : success.map(e => e.duration).reduce((a, b) => Math.max(a, b));
+                const average = success.length == 0 ? 0 : success.map(e => e.duration).reduce((a, b) => a + b);
                 if (urls.length > 0) {
                     try {
                         durationURLs.push({
                             method,
                             url: obj,
-                            min: success.length == 0 ? 0 : success.map(e => e.duration).reduce((a, b) => Math.min(a, b)),
-                            max: urls.map(e => e.duration).reduce((a, b) => Math.max(a, b)),
+                            min,
+                            max,
+                            average: average / Math.max(success.length, 1),
+                            count: success.length,
                         });
                     } catch (error) {
                         console.error(error);
