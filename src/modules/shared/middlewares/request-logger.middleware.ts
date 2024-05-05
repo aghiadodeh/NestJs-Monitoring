@@ -13,60 +13,68 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
     abstract create(data: any): Promise<void>;
 
     protected async saveLog(req: Request, res: Response): Promise<void> {
-        if (req.originalUrl.includes('monitoring/')) return;
-        const now = new Date();
-        let body = req.body;
-        if (!req.headers["cache-control"]) {
-            req.headers["cache-control"] = "no-cache";
-        }
-
-        const response = {
-            ...(await this.getResponse(res)).body,
-            datetime: moment().toISOString(),
-        };
-
         try {
-            if (req.headers['content-type']?.toLocaleLowerCase().includes('multipart/form-data')) {
-                body = res['req'].body;
+            if (req.originalUrl.includes('monitoring/')) return;
+
+            const now = new Date();
+            let body = req.body;
+            if (!req.headers["cache-control"]) {
+                req.headers["cache-control"] = "no-cache";
             }
-        } catch (error) {
-            console.error('BaseRequestLoggerMiddleware', error);
-        }
 
-        const request = {
-            ip: req.ip,
-            headers: req.headers,
-            url: req.originalUrl,
-            method: req.method,
-            params: req.params,
-            queries: req.query,
-            body: body,
-            datetime: now,
-            date: now,
-        };
+            const response = {
+                ...(await this.getResponse(res)).body,
+                datetime: moment().toISOString(),
+            };
 
-        const diff = moment(new Date()).diff(request.date, 'milliseconds');
-        const duration = moment.duration(diff, 'milliseconds');
-        delete request.date;
+            const contentType = res.getHeader("content-type");
+            if (!contentType?.toString()?.includes("json")) {
+                return;
+            }
 
-        if (req['res'] && req['res']['stack']) {
-            response['exception'] = req['res']['stack'];
-        }
+            try {
+                if (req.headers['content-type']?.toLocaleLowerCase().includes('multipart/form-data')) {
+                    body = res['req'].body;
+                }
+            } catch (error) {
+                console.error('BaseRequestLoggerMiddleware', error);
+            }
 
-        if (req['user']) {
-            request['user'] = req['user'];
-        }
+            const request = {
+                ip: req.ip,
+                headers: req.headers,
+                url: req.originalUrl,
+                method: req.method,
+                params: req.params,
+                queries: req.query,
+                body: body,
+                datetime: now,
+                date: now,
+            };
 
-        this.create({
-            key: 'apis-traffic',
-            url: request.url,
-            method: request.method,
-            request,
-            response,
-            responseHeaders: res.getHeaders(),
-            success: response.success,
-            duration: duration.asMilliseconds(),
-        });
+            const diff = moment(new Date()).diff(request.date, 'milliseconds');
+            const duration = moment.duration(diff, 'milliseconds');
+            delete request.date;
+
+            if (req['res'] && req['res']['stack']) {
+                response['exception'] = req['res']['stack'];
+            }
+
+            if (req['user']) {
+                request['user'] = req['user'];
+            }
+
+            await this.create({
+                key: 'apis-traffic',
+                url: request.url,
+                method: request.method,
+                request,
+                response,
+                responseHeaders: res.getHeaders(),
+                success: response.success,
+                duration: duration.asMilliseconds(),
+            });
+        } catch (error) { }
     }
 
     protected getResponse = (res: Response): Promise<any> => {
