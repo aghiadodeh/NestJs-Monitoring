@@ -92,6 +92,14 @@ This package use [NestJs-i18n](https://www.npmjs.com/package/nestjs-i18n) for tr
     └── ...
  
 ## Setup Mongoose Monitoring:
+Add DB config to `.env` file:
+```env
+# monitoring db config
+MONITORING_DB_NAME = 'monitoring_db'
+MONITORING_DB_USERNAME = ''
+MONITORING_DB_PASSWORD = ''
+MONITORING_MONGO_DB_URL = 'mongodb://127.0.0.1:27017'
+```
 
 add `MonitoringModule` to your `src/app.module.ts`:
 ```typescript
