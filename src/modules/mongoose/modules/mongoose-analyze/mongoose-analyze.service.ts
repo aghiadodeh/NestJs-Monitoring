@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import mongoose, { Model } from "mongoose";
+import mongoose, { Model, PipelineStage } from "mongoose";
 import { RequestLog } from "../../entities/request-log.entity";
 import { MongooseLog } from "../../entities/mongoose-log.entity";
 import { MonitoringListResponse } from "../../../../models/list.response";
@@ -14,6 +14,34 @@ import { MONITORING_MONGO_CONNECTION } from "../../../shared/config/config";
 
 @Injectable()
 export class MongooseAnalyzeService extends MonitoringService {
+  private get durationProjection(): PipelineStage.Project {
+    return { $project: { duration: 1, url: 1, method: 1, success: 1, 'response.statusCode': 1 } };
+  }
+
+  private durationBoundaries = [0, 20, 40, 80, 130, 150, 180, 200, 500, 1000, 2000];
+
+  private get durationBucket(): PipelineStage.Bucket {
+    return {
+      $bucket: {
+        groupBy: "$duration",
+        boundaries: this.durationBoundaries,
+        default: 1000000,
+        output: {
+          count: { $sum: 1 },
+          data: {
+            $push: {
+              duration: "$duration",
+              method: "$method",
+              url: "$url",
+              success: "$success",
+              statusCode: "$response.statusCode",
+            },
+          },
+        },
+      },
+    };
+  }
+
   constructor(
     @InjectModel(JobLog.name, MONITORING_MONGO_CONNECTION) private jobLog: Model<JobLog>,
     @InjectModel(RequestLog.name, MONITORING_MONGO_CONNECTION)
@@ -179,30 +207,19 @@ export class MongooseAnalyzeService extends MonitoringService {
     });
 
     // requests durations
-    const durationBoundaries = [0, 20, 40, 80, 130, 150, 180, 200, 500, 1000, 2000];
-    const duration = await this.requestLog.aggregate([
-      { $match: condition },
-      { $project: { duration: 1, url: 1, method: 1, success: 1, "response.statusCode": 1 } },
-      {
-        $bucket: {
-          groupBy: "$duration",
-          boundaries: durationBoundaries,
-          default: 1000000,
-          output: {
-            count: { $sum: 1 },
-            data: {
-              $push: {
-                duration: "$duration",
-                method: "$method",
-                url: "$url",
-                success: "$success",
-                statusCode: "$response.statusCode",
-              },
-            },
-          },
-        },
-      },
-    ]);
+    // requests durations
+    let duration: any[] = [];
+    try {
+      duration = await this.requestLog.aggregate([
+        { $match: condition },
+        this.durationProjection,
+        this.durationBucket,
+      ]);
+    } catch (error) {
+      // error BSON size
+      console.log("Analyze with pagination due to large data size...");
+      duration = await this.getDurationsWithPagination(condition, total);
+    }
 
     // get requests grouped by end-point (min-max for each group)
     const durations = duration.flatMap((e) => e.data);
@@ -270,7 +287,37 @@ export class MongooseAnalyzeService extends MonitoringService {
       duration,
       durationURLs,
       createdAt,
-      durationBoundaries,
+      durationBoundaries: this.durationBoundaries,
     };
+  }
+
+  private async getDurationsWithPagination(condition: object, total: number): Promise<any> {
+      const pageSize = 100;
+      let offset = 0;
+      let results = [];
+      let hasMore = true;
+
+      while (hasMore) {
+          try {
+              const duration = await this.requestLog.aggregate([
+                  { $match: condition },
+                  { $skip: offset },
+                  { $limit: pageSize },
+                  this.durationProjection,
+                  this.durationBucket,
+              ]);
+              
+              results = results.concat(duration);
+              if (results.length >= total) {
+                  hasMore = false;
+              } else {
+                  offset += pageSize;
+              }
+          } catch (_) {
+              hasMore = false;
+          }
+      }
+
+      return results;
   }
 }

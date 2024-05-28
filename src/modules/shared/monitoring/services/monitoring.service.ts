@@ -51,7 +51,10 @@ export abstract class MonitoringService {
     for (let i = 0; i < diff; i++) {
       range.push(moment(startDate).add(i, type).toDate());
     }
-    if (range.length == 1) {
+    if (range.length == 0) {
+      range.push(moment(startDate).toDate());
+      range.push(moment(endDate).toDate());
+    } else if (range.length == 1) {
       range.push(moment(endDate).toDate());
     }
 

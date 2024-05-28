@@ -56,12 +56,14 @@ export class MongooseMonitoringModule implements NestModule {
       );
     }
 
-    if (process.env.MONITORING_REDIS_HOST && process.env.MONITORING_REDIS_PORT) {
-      imports.push(BullModule.registerQueue({ name: MONITORING_QUEUE }));
-    }
-
     return {
-      imports: [...imports, mongooseSchemas, MongooseAnalyzeModule, MonitoringAuthenticationModule],
+      imports: [
+        ...imports,
+        mongooseSchemas,
+        MongooseAnalyzeModule,
+        MonitoringAuthenticationModule,
+        BullModule.registerQueue({ name: MONITORING_QUEUE }),
+      ],
       providers: [
         MongooseMonitoringConsumer,
         MongooseMonitoringDbService,

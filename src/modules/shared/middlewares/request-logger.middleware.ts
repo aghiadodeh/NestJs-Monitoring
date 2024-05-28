@@ -66,14 +66,17 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
       }
 
       if (process.env.MONITORING_REQUEST_LOG_ENABLED == "true") {
-        this.logger.debug(
-          "Request:",
-          now,
-          `${request.method} ${request.url}`,
-          `Body: ${request.body}`,
-          `Qureies ${request.queries}`,
-          `Response: ${response.statusCode}`,
-        );
+        try {
+          console.log(
+            `\x1B[0;36mRequest:\x1B[0m\n`,
+            `\x1B[0;34mAPI:\x1B[0m ${request.method} - ${request.url}\n`,
+            `\x1B[0;30mDate:\x1B[0m ${now}\n`,
+            `\x1B[0;33mBody:\x1B[0m ${JSON.stringify(request.body)}\n`,
+            `\x1B[0;35mQueries:\x1B[0m ${JSON.stringify(request.queries)}\n`,
+            response.success == false ? `\x1B[0;31mResponse:\x1B[0m "${response.message}"\n` : `\x1B[0;32mResponse:\x1B[0m "${response.message}"\n`,
+            "---------------------",
+          );
+        } catch (_) {}
       }
 
       await this.create({

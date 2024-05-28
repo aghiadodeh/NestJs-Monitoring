@@ -17,21 +17,6 @@ export class MonitoringModule {
     const imports: any[] = [];
     const exports: any[] = [];
 
-    if (process.env.MONITORING_REDIS_HOST && process.env.MONITORING_REDIS_PORT) {
-      imports.push(
-        BullModule.forRoot({
-          redis: {
-            host: process.env.MONITORING_REDIS_HOST,
-            port: +process.env.MONITORING_REDIS_PORT,
-          },
-          defaultJobOptions: {
-            removeOnComplete: true,
-            removeOnFail: true,
-          },
-        }),
-      );
-    }
-
     if (orm == "mongoose") {
       imports.push(MongooseMonitoringModule.forRoot());
       exports.push(MongooseMonitoringModule.forRoot());
@@ -43,6 +28,16 @@ export class MonitoringModule {
     return {
       imports: [
         ...imports,
+        BullModule.forRoot({
+          redis: {
+            host: process.env.MONITORING_REDIS_HOST ?? "localhost",
+            port: +process.env.MONITORING_REDIS_PORT ?? 6379,
+          },
+          defaultJobOptions: {
+            removeOnComplete: true,
+            removeOnFail: true,
+          },
+        }),
         PassportModule.register({ defaultStrategy: "jwt" }),
         JwtModule.register({ secret: process.env.MONITORING_JWT_SECRET }),
       ],
