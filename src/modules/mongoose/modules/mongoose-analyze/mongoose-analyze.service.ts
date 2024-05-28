@@ -291,33 +291,46 @@ export class MongooseAnalyzeService extends MonitoringService {
     };
   }
 
+
+
   private async getDurationsWithPagination(condition: object, total: number): Promise<any> {
-      const pageSize = 100;
-      let offset = 0;
-      let results = [];
-      let hasMore = true;
+    const pageSize = 100;
+    let offset = 0;
+    let results = [];
+    let hasMore = true;
 
-      while (hasMore) {
-          try {
-              const duration = await this.requestLog.aggregate([
-                  { $match: condition },
-                  { $skip: offset },
-                  { $limit: pageSize },
-                  this.durationProjection,
-                  this.durationBucket,
-              ]);
-              
-              results = results.concat(duration);
-              if (results.length >= total) {
-                  hasMore = false;
-              } else {
-                  offset += pageSize;
-              }
-          } catch (_) {
-              hasMore = false;
-          }
-      }
+    while (hasMore) {
+        try {
+            const duration = await this.requestLog.aggregate([
+                { $match: condition },
+                { $skip: offset },
+                { $limit: pageSize },
+                this.durationProjection,
+                this.durationBucket,
+            ]);
+            results = results.concat(...duration);
+            if ((results.flatMap(e => e.data).length) >= total) {
+                hasMore = false;
+            } else {
+                offset += pageSize;
+            }
+        } catch (_) {
+            hasMore = false;
+        }
+    }
+    
 
-      return results;
-  }
+    const ids = [...new Set(results.map(obj => obj._id))];
+    const result = [];
+    ids.forEach((id: number) => {
+        const item = { _id: id, count: 0, data: [] };
+        results.filter(e => e._id == id).forEach(e => {
+            item.count = item.count + e.count;
+            item.data = item.data.concat(e.data);
+        });
+        result.push(item);
+    });
+
+    return result;
+}
 }
