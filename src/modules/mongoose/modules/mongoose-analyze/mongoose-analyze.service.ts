@@ -291,8 +291,6 @@ export class MongooseAnalyzeService extends MonitoringService {
     };
   }
 
-
-
   private async getDurationsWithPagination(condition: object, total: number): Promise<any> {
     const pageSize = 100;
     let offset = 0;
@@ -300,37 +298,37 @@ export class MongooseAnalyzeService extends MonitoringService {
     let hasMore = true;
 
     while (hasMore) {
-        try {
-            const duration = await this.requestLog.aggregate([
-                { $match: condition },
-                { $skip: offset },
-                { $limit: pageSize },
-                this.durationProjection,
-                this.durationBucket,
-            ]);
-            results = results.concat(...duration);
-            if ((results.flatMap(e => e.data).length) >= total) {
-                hasMore = false;
-            } else {
-                offset += pageSize;
-            }
-        } catch (_) {
-            hasMore = false;
+      try {
+        const duration = await this.requestLog.aggregate([
+          { $match: condition },
+          { $skip: offset },
+          { $limit: pageSize },
+          this.durationProjection,
+          this.durationBucket,
+        ]);
+        results = results.concat(...duration);
+        if ((results.flatMap(e => e.data).length) >= total) {
+          hasMore = false;
+        } else {
+          offset += pageSize;
         }
+      } catch (_) {
+        hasMore = false;
+      }
     }
-    
+
 
     const ids = [...new Set(results.map(obj => obj._id))];
     const result = [];
     ids.forEach((id: number) => {
-        const item = { _id: id, count: 0, data: [] };
-        results.filter(e => e._id == id).forEach(e => {
-            item.count = item.count + e.count;
-            item.data = item.data.concat(e.data);
-        });
-        result.push(item);
+      const item = { _id: id, count: 0, data: [] };
+      results.filter(e => e._id == id).forEach(e => {
+        item.count = item.count + e.count;
+        item.data = item.data.concat(e.data);
+      });
+      result.push(item);
     });
-
+    console.log(`\x1B[0;32mAnalyze with pagination Done\x1B[0m`);
     return result;
-}
+  }
 }
