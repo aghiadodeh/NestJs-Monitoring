@@ -19,6 +19,7 @@ export * from "./modules/mongoose/modules/mongoose-analyze/mongoose-analyze.modu
 export * from "./modules/mongoose/modules/mongoose-analyze/mongoose-analyze.service";
 export * from "./modules/mongoose/modules/mongoose-monitoring-db/mongoose-monitoring-db.service";
 export * from "./modules/mongoose/modules/mongoose-monitoring-job/mongoose-monitoring-job.service";
+export * from "./modules/mongoose/plugins/mongoose-duration-tracking.plugin";
 
 // sequelize
 export * from "./modules/sequelize/entities/sequelize-log.entity";

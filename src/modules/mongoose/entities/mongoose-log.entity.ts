@@ -14,8 +14,17 @@ export class MongooseLog extends Document {
   @Prop({ default: null })
   query: mongoose.Schema.Types.Mixed;
 
+  @Prop()
+  update: mongoose.Schema.Types.Mixed;
+
   @Prop({ default: null })
   options: mongoose.Schema.Types.Mixed;
+
+  @Prop({ default: null })
+  result: mongoose.Schema.Types.Mixed;
+
+  @Prop()
+  duration: number;
 }
 
 export const MongooseLogSchema = SchemaFactory.createForClass(MongooseLog);
