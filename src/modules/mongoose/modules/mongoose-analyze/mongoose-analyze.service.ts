@@ -11,14 +11,17 @@ import { MonitoringRequestFilterDto } from "../../../shared/monitoring/dtos/moni
 import { MonitoringMongoFilterDto } from "../../../shared/monitoring/dtos/monitoring-mongo-filter.dto";
 import { MonitoringJobFilterDto } from "../../../shared/monitoring/dtos/jobs-filter.dto";
 import { MONITORING_MONGO_CONNECTION } from "../../../shared/config/config";
+import moment from "moment-timezone";
 
 @Injectable()
 export class MongooseAnalyzeService extends MonitoringService {
   private get durationProjection(): PipelineStage.Project {
-    return { $project: { duration: 1, url: 1, method: 1, success: 1, 'response.statusCode': 1 } };
+    return { $project: { duration: 1, url: 1, method: 1, success: 1, "response.statusCode": 1 } };
   }
 
-  private durationBoundaries = [0, 20, 40, 80, 130, 150, 180, 200, 500, 1000, 2000];
+  private durationBoundaries = [
+    0, 20, 40, 80, 130, 150, 180, 200, 500, 1000, 2000, 3000, 6000, 10000,
+  ];
 
   private get durationBucket(): PipelineStage.Bucket {
     return {
@@ -57,7 +60,7 @@ export class MongooseAnalyzeService extends MonitoringService {
   ): Promise<MonitoringListResponse<RequestLog>> {
     const { fromDate, toDate } = this.getFilterDates(filterDto);
     const condition = { createdAt: { $gte: fromDate, $lt: toDate } };
-    const { sortDir, exception, url, method, success, user } = filterDto;
+    const { sortDir, exception, url, method, success, user, durationGt, durationLt } = filterDto;
     if (exception) {
       condition["response.exception"] = { $exists: true };
     }
@@ -70,8 +73,15 @@ export class MongooseAnalyzeService extends MonitoringService {
     if (success) {
       condition["success"] = JSON.parse(success);
     }
+    if (durationGt || durationLt) {
+      const durationCondition = {};
+      if (durationGt) durationCondition["$gte"] = +durationGt;
+      if (durationLt) durationCondition["$lte"] = +durationLt;
+
+      condition["duration"] = durationCondition;
+    }
     if (user && mongoose.isValidObjectId(user)) {
-      condition["request.user._id"] = new mongoose.Types.ObjectId(user);
+      condition["request.user._id"] = user;
     }
     const { perPage, skip } = this.getPaginationData(filterDto);
     const sortKey = filterDto.sortKey ?? "createdAt";
@@ -207,7 +217,6 @@ export class MongooseAnalyzeService extends MonitoringService {
     });
 
     // requests durations
-    // requests durations
     let duration: any[] = [];
     try {
       duration = await this.requestLog.aggregate([
@@ -217,7 +226,6 @@ export class MongooseAnalyzeService extends MonitoringService {
       ]);
     } catch (error) {
       // error BSON size
-      console.log("Analyze with pagination due to large data size...");
       duration = await this.getDurationsWithPagination(condition, total);
     }
 
@@ -254,29 +262,17 @@ export class MongooseAnalyzeService extends MonitoringService {
       });
     });
 
-    const createdAt = await this.requestLog.aggregate([
-      { $match: condition },
-      { $project: { duration: 1, url: 1, method: 1, createdAt: 1 } },
-      {
-        $bucket: {
-          groupBy: "$createdAt",
-          boundaries: this.getRange(fromDate, toDate),
-          default: toDate,
-          output: {
-            count: { $sum: 1 },
-            data: {
-              $push: {
-                duration: "$duration",
-                method: "$method",
-                url: "$url",
-                createdAt: "$createdAt",
-                success: "$success",
-              },
-            },
-          },
-        },
-      },
-    ]);
+    let createdAt: any[] = [];
+    try {
+      createdAt = await this.requestLog.aggregate([
+        { $match: condition },
+        { $project: { duration: 1, url: 1, method: 1, createdAt: 1 } },
+        this.createdAtBucket(fromDate, toDate),
+      ]);
+    } catch (_) {
+      // error BSON size
+      createdAt = await this.getCreatedAtWithPagination(condition, total, fromDate, toDate);
+    }
 
     return {
       fromDate,
@@ -292,7 +288,8 @@ export class MongooseAnalyzeService extends MonitoringService {
   }
 
   private async getDurationsWithPagination(condition: object, total: number): Promise<any> {
-    const pageSize = 100;
+    console.log("Analyze Duration with pagination due to large data size...");
+    const pageSize = 1000;
     let offset = 0;
     let results = [];
     let hasMore = true;
@@ -307,7 +304,9 @@ export class MongooseAnalyzeService extends MonitoringService {
           this.durationBucket,
         ]);
         results = results.concat(...duration);
-        if ((results.flatMap(e => e.data).length) >= total) {
+        const data = results.flatMap((e) => e.data);
+        console.log(`\x1B[0;35mAnalyze Duration with pagination ${data.length}/${total}...\x1B[0m`);
+        if (data.length >= total || data.length == 0) {
           hasMore = false;
         } else {
           offset += pageSize;
@@ -317,18 +316,91 @@ export class MongooseAnalyzeService extends MonitoringService {
       }
     }
 
-
-    const ids = [...new Set(results.map(obj => obj._id))];
+    const ids = [...new Set(results.map((obj) => obj._id))];
     const result = [];
     ids.forEach((id: number) => {
       const item = { _id: id, count: 0, data: [] };
-      results.filter(e => e._id == id).forEach(e => {
-        item.count = item.count + e.count;
-        item.data = item.data.concat(e.data);
-      });
+      results
+        .filter((e) => e._id == id)
+        .forEach((e) => {
+          item.count = item.count + e.count;
+          item.data = item.data.concat(e.data);
+        });
       result.push(item);
     });
-    console.log(`\x1B[0;32mAnalyze with pagination Done\x1B[0m`);
+    console.log(`\x1B[0;32mAnalyze Duration with pagination Done\x1B[0m`);
     return result;
+  }
+
+  private async getCreatedAtWithPagination(
+    condition: object,
+    total: number,
+    fromDate: Date,
+    toDate: Date,
+  ): Promise<any> {
+    console.log("Analyze Traffic with pagination due to large data size...");
+    const pageSize = 1000;
+    let offset = 0;
+    let results = [];
+    let hasMore = true;
+
+    while (hasMore) {
+      try {
+        const createdAt = await this.requestLog.aggregate([
+          { $match: condition },  
+          { $skip: offset },
+          { $limit: pageSize },
+          { $project: { duration: 1, url: 1, method: 1, createdAt: 1 } },
+          this.createdAtBucket(fromDate, toDate),
+        ]);
+        results = results.concat(...createdAt);
+        const data = results.flatMap((e) => e.data);
+        console.log(`\x1B[0;36mAnalyze Traffic with pagination ${data.length}/${total}...\x1B[0m`);
+        if (data.length >= total || data.length == 0) {
+          hasMore = false;
+        } else {
+          offset += pageSize;
+        }
+      } catch (_) {
+        hasMore = false;
+      }
+    }
+
+    const ids = [...new Set(results.map((obj) => moment(obj._id).format()))];
+    const result = [];
+    ids.forEach((id: string) => {
+      const item = { _id: id, count: 0, data: [] };
+      results
+        .filter((e) => moment(e._id).format() == id)
+        .forEach((e) => {
+          item.count = item.count + e.count;
+          item.data = item.data.concat(e.data);
+        });
+      result.push(item);
+    });
+    console.log(`\x1B[0;32mAnalyze Traffic with pagination Done\x1B[0m`);
+    return result;
+  }
+
+  private createdAtBucket(fromDate: Date, toDate: Date): PipelineStage.Bucket {
+    return {
+      $bucket: {
+        groupBy: "$createdAt",
+        boundaries: this.getRange(fromDate, toDate),
+        default: toDate,
+        output: {
+          count: { $sum: 1 },
+          data: {
+            $push: {
+              duration: "$duration",
+              method: "$method",
+              url: "$url",
+              createdAt: "$createdAt",
+              success: "$success",
+            },
+          },
+        },
+      },
+    };
   }
 }

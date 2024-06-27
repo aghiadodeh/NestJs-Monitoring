@@ -35,7 +35,12 @@ export class MonitoringModule {
           },
           defaultJobOptions: {
             removeOnComplete: true,
-            removeOnFail: true,
+            timeout: 180 * 1000, // 3 minute
+            attempts: 5,
+            backoff: {
+              type: "fixed",
+              delay: 5000, // 5 seconds
+            },
           },
         }),
         PassportModule.register({ defaultStrategy: "jwt" }),

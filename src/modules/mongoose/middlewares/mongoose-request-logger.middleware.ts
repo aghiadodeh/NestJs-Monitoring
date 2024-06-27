@@ -19,8 +19,7 @@ export class MongooseRequestLoggerMiddleware extends BaseRequestLoggerMiddleware
     @InjectQueue(MONITORING_QUEUE)
     private queue: Queue,
   ) {
-    const logger = new Logger(MongooseRequestLoggerMiddleware.name);
-    super(logger);
+    super();
   }
 
   async create(data: any): Promise<void> {

@@ -16,4 +16,10 @@ export class MonitoringRequestFilterDto extends MonitoringBaseFilterDto {
 
   @IsOptional()
   user: string;
+
+  @IsOptional()
+  durationLt: string;
+
+  @IsOptional()
+  durationGt: string;
 }

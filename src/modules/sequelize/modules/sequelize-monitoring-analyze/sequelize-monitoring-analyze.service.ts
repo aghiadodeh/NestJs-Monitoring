@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { SequelizeRequestLog } from "../../entites/request-log.entity";
-import { SequelizeDBLog } from "../../entites/sequelize-log.entity";
-import { SequelizeJobLog } from "../../entites/job-log.entity";
+import { SequelizeRequestLog } from "../../entities/request-log.entity";
+import { SequelizeDBLog } from "../../entities/sequelize-log.entity";
+import { SequelizeJobLog } from "../../entities/job-log.entity";
 import { InjectModel } from "@nestjs/sequelize";
 import { MonitoringService } from "../../../shared/monitoring/services/monitoring.service";
 import { MonitoringBaseFilterDto } from "../../../shared/monitoring/dtos/base-filter.dto";

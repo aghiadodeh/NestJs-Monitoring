@@ -21,12 +21,23 @@ export * from "./modules/mongoose/modules/mongoose-monitoring-db/mongoose-monito
 export * from "./modules/mongoose/modules/mongoose-monitoring-job/mongoose-monitoring-job.service";
 
 // sequelize
-export * from "./modules/sequelize/entites/sequelize-log.entity";
-export * from "./modules/sequelize/entites/request-log.entity";
-export * from "./modules/sequelize/entites/job-log.entity";
+export * from "./modules/sequelize/entities/sequelize-log.entity";
+export * from "./modules/sequelize/entities/request-log.entity";
+export * from "./modules/sequelize/entities/job-log.entity";
 export * from "./modules/sequelize/middlewares/sequelize-request-logger.middleware";
 export * from "./modules/sequelize/modules/sequelize-monitoring-analyze/sequelize-monitoring-analyze.controller";
 export * from "./modules/sequelize/modules/sequelize-monitoring-analyze/sequelize-monitoring-analyze.module";
 export * from "./modules/sequelize/modules/sequelize-monitoring-analyze/sequelize-monitoring-analyze.service";
 export * from "./modules/sequelize/modules/sequelize-monitoring-db/sequelize-monitoring-db.service";
 export * from "./modules/sequelize/modules/sequelize-monitoring-job/sequelize-monitoring-job.service";
+
+// shared
+export * from "./modules/shared/config/config";
+export * from "./modules/shared/middlewares/request-logger.middleware";
+export * from "./modules/shared/monitoring/dtos/base-filter.dto";
+export * from "./modules/shared/monitoring/dtos/jobs-filter.dto";
+export * from "./modules/shared/monitoring/dtos/monitoring-mongo-filter.dto";
+export * from "./modules/shared/monitoring/dtos/monitoring-requests-filter.dto";
+export * from "./modules/shared/monitoring/dtos/monitoring-sequelize-filter.dto";
+export * from "./modules/shared/monitoring/services/monitoring-job.service";
+export * from "./modules/shared/monitoring/services/monitoring.service";

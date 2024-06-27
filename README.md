@@ -51,6 +51,15 @@ MONITORING_DB_LOG_SAVE_ENABLED = 'true'
 MONITORING_REQUEST_SAVE_ENABLED = 'true'
 ```
 
+If you want to get better performance for inserting logs, monitoring tool uses [Bull](https://www.npmjs.com/package/@nestjs/bull) to insert logs depending on queue.
+
+[Bull](https://www.npmjs.com/package/@nestjs/bull) depends on Redis, so you need adding Redis config in your `.env` file:
+```env
+# monitoring redis config
+MONITORING_REDIS_HOST="localhost"
+MONITORING_REDIS_PORT=6379
+```
+
 And you must use the Monitoring `GlobalFilters` and `GlobalPrefix` in your `src/main.ts`:
 ```typescript
 import { MonitoringExceptionFilter } from "nestjs-monitoring";

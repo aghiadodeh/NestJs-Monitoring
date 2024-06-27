@@ -1,10 +1,10 @@
-import { Injectable, Logger, NestMiddleware } from "@nestjs/common";
+import { Injectable, NestMiddleware } from "@nestjs/common";
 import { Request, Response, NextFunction } from "express";
 import moment from "moment-timezone";
 
 @Injectable()
 export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
-  constructor(protected logger: Logger) {}
+  constructor() {}
 
   use(request: Request, response: Response, next: NextFunction) {
     this.saveLog(request, response);
@@ -73,7 +73,9 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
             `\x1B[0;30mDate:\x1B[0m ${now}\n`,
             `\x1B[0;33mBody:\x1B[0m ${JSON.stringify(request.body)}\n`,
             `\x1B[0;35mQueries:\x1B[0m ${JSON.stringify(request.queries)}\n`,
-            response.success == false ? `\x1B[0;31mResponse:\x1B[0m "${response.message}"\n` : `\x1B[0;32mResponse:\x1B[0m "${response.message}"\n`,
+            response.success == false
+              ? `\x1B[0;31mResponse:\x1B[0m "${response.message}"\n`
+              : `\x1B[0;32mResponse:\x1B[0m "${response.message}"\n`,
             "---------------------",
           );
         } catch (_) {}
@@ -88,6 +90,7 @@ export abstract class BaseRequestLoggerMiddleware implements NestMiddleware {
         responseHeaders: res.getHeaders(),
         success: response.success,
         duration: duration.asMilliseconds(),
+        createdAt: new Date(),
       });
     } catch (error) {}
   }

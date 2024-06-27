@@ -3,11 +3,11 @@ import { SequelizeMonitoringAnalyzeService } from "./sequelize-monitoring-analyz
 import { MonitoringAuthenticationGuard } from "../../../authentication/guards/monitoring-authentication.guard";
 import { MonitoringRequestFilterDto } from "../../../../modules/shared/monitoring/dtos/monitoring-requests-filter.dto";
 import { MonitoringListResponse } from "../../../../models/list.response";
-import { SequelizeRequestLog } from "../../entites/request-log.entity";
+import { SequelizeRequestLog } from "../../entities/request-log.entity";
 import { MonitoringBaseFilterDto } from "../../../../modules/shared/monitoring/dtos/base-filter.dto";
 import { MonitoringSequelizeFilterDto } from "../../../shared/monitoring/dtos/monitoring-sequelize-filter.dto";
-import { SequelizeDBLog } from "../../entites/sequelize-log.entity";
-import { SequelizeJobLog } from "../../entites/job-log.entity";
+import { SequelizeDBLog } from "../../entities/sequelize-log.entity";
+import { SequelizeJobLog } from "../../entities/job-log.entity";
 import { MonitoringJobFilterDto } from "../../../../modules/shared/monitoring/dtos/jobs-filter.dto";
 
 @Controller("monitoring/sequelize")

@@ -50,7 +50,7 @@ export class MongooseMonitoringModule implements NestModule {
           user: process.env.MONITORING_DB_USERNAME,
           pass: process.env.MONITORING_DB_PASSWORD,
           dbName: process.env.MONITORING_DB_NAME,
-          connectionName: "monitoring-db",
+          connectionName: MONITORING_MONGO_CONNECTION,
           writeConcern: { w: 0, wtimeoutMS: 180 * 1000 },
         }),
       );

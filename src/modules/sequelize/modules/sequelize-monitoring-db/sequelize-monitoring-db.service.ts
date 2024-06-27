@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectModel } from "@nestjs/sequelize";
 import { Sequelize } from "sequelize-typescript";
-import { SequelizeDBLog } from "../../entites/sequelize-log.entity";
+import { SequelizeDBLog } from "../../entities/sequelize-log.entity";
 
 @Injectable()
 export class SequelizeMonitoringDbService {
