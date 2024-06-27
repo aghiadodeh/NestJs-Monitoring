@@ -32,28 +32,6 @@ export class MongooseMonitoringDbService {
     mongooseEventEmitter = eventEmitter;
   }
 
-  protected watchQueries(): void {
-    if (
-      process.env.MONITORING_DB_LOG_ENABLED == "true" ||
-      process.env.MONITORING_DB_LOG_SAVE_ENABLED == "true"
-    ) {
-      /*
-      mongoose.set("debug", async (collectionName, method, query, options) => {
-        const collections = [
-          this.mongooseLog.collection.name,
-          this.requestLog.collection.name,
-          this.jobLog.collection.name,
-        ];
-        if (!collections.includes(collectionName)) {
-          if (!["createIndex"].includes(method)) {
-            await this.saveQuery(collectionName, method, query, options);
-          }
-        }
-      });
-      */
-    }
-  }
-
   @OnEvent("IMongooseTracking")
   public async handleMongooseTrackingEvent(iTracking: IMongooseTracking): Promise<void> {
     const { op, collection, piplines, query, update, duration } = iTracking;
@@ -72,7 +50,7 @@ export class MongooseMonitoringDbService {
         piplines ?? query,
         update ?? "",
         ")\n",
-        "\x1B[0;37mQuery duration:\x1B[0m",
+        "\x1B[0;34mQuery duration:\x1B[0m",
         `${duration}ms`,
         "\n---------------------",
       );

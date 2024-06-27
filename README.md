@@ -112,16 +112,26 @@ MONITORING_MONGO_DB_URL = 'mongodb://127.0.0.1:27017'
 
 add `MonitoringModule` to your `src/app.module.ts`:
 ```typescript
-import { MonitoringModule } from "nestjs-monitoring";
+import { MonitoringModule, mongooseTrackingPlugin } from "nestjs-monitoring";
 
 @Module({
   imports: [
+    MongooseModule.forRoot(process.env.MONGO_DB_URL, {
+      user: process.env.DB_USERNAME,
+      pass: process.env.DB_PASSWORD,
+      dbName: process.env.DB_NAME,
+      connectionFactory: (connection) => {
+        connection.plugin(mongooseTrackingPlugin); // <-- add `mongooseTrackingPlugin` here for monitoring db
+        return connection;
+      }
+    }),
     MonitoringModule.forRoot({ orm: 'mongoose' }), // <-- add mongoose here
     // ...,
   ],
 })
 export class AppModule {}
 ```
+
 ## Save Job Logs Manually:
 
 You can create your own job for background operations:
