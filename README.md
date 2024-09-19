@@ -113,9 +113,11 @@ MONITORING_MONGO_DB_URL = 'mongodb://127.0.0.1:27017'
 add `MonitoringModule` to your `src/app.module.ts`:
 ```typescript
 import { MonitoringModule, mongooseTrackingPlugin } from "nestjs-monitoring";
+import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGO_DB_URL, {
       user: process.env.DB_USERNAME,
       pass: process.env.DB_PASSWORD,
