@@ -19,43 +19,53 @@ export const mongooseTrackingPlugin = (schema: Schema) => {
 
   operations.forEach((op: any) => {
     // Pre hook for tracking start time
-    schema.pre(op, function(next) {
-      this._startTime = Date.now();
+    schema.pre(op, function (next) {
+      try {
+        this._startTime = Date.now();
+      } catch (_) { }
       next();
     });
 
     // Post hook for tracking end time and logging duration
-    schema.post(op, function(result, next) {
-      const duration = Date.now() - (this["_startTime"] as any);
-      const iTracking: IMongooseTracking = { op, collection: this.model().collection.name, duration };
-      if (this instanceof Query) {
-        iTracking.query = this.getQuery();
-        iTracking.options = this.getOptions();
-        if (this.getUpdate) {
-          iTracking.update = this.getUpdate();
+    schema.post(op, function (result, next) {
+      try {
+        const duration = Date.now() - (this["_startTime"] as any);
+        const iTracking: IMongooseTracking = { op, collection: this.model().collection.name, duration };
+        if (this instanceof Query) {
+          iTracking.query = this.getQuery();
+          iTracking.options = this.getOptions();
+          if (this.getUpdate) {
+            iTracking.update = this.getUpdate();
+          }
+        } else {
+          iTracking.query = this;
         }
-      }
-      mongooseEventEmitter?.emit("IMongooseTracking", iTracking);
+        mongooseEventEmitter?.emit("IMongooseTracking", iTracking);
+      } catch (_) { }
       next();
     });
   });
 
   // Specific handling for aggregate
-  schema.pre('aggregate', function(next) {
-    this["_startTime"] = Date.now();
+  schema.pre('aggregate', function (next) {
+    try {
+      this["_startTime"] = Date.now();
+    } catch (_) { }
     next();
   });
 
-  schema.post('aggregate', function(result, next) {
-    const duration = Date.now() - this["_startTime"];
-    const iTracking: IMongooseTracking = {
-      duration,
-      op: 'aggregate',
-      collection: this.model().collection.name,
-      piplines: this.pipeline(),
-      aggregate: true,
-    };
-    mongooseEventEmitter?.emit("IMongooseTracking", iTracking);
+  schema.post('aggregate', function (result, next) {
+    try {
+      const duration = Date.now() - this["_startTime"];
+      const iTracking: IMongooseTracking = {
+        duration,
+        op: 'aggregate',
+        collection: this.model().collection.name,
+        piplines: this.pipeline(),
+        aggregate: true,
+      };
+      mongooseEventEmitter?.emit("IMongooseTracking", iTracking);
+    } catch (_) { }
 
     next();
   });

@@ -25,24 +25,27 @@ export class MonitoringModule {
       exports.push(SequelizeMonitoringModule.forRoot());
     }
 
+    if (process.env.MONITORING_REDIS_HOST && process.env.MONITORING_REDIS_PORT) {
+      imports.push(BullModule.forRoot({
+        redis: {
+          host: process.env.MONITORING_REDIS_HOST ?? "localhost",
+          port: +(process.env.MONITORING_REDIS_PORT ?? 6379),
+        },
+        defaultJobOptions: {
+          removeOnComplete: true,
+          timeout: 180 * 1000, // 3 minute
+          attempts: 5,
+          backoff: {
+            type: "fixed",
+            delay: 5000, // 5 seconds
+          },
+        },
+      }));
+    }
+
     return {
       imports: [
         ...imports,
-        BullModule.forRoot({
-          redis: {
-            host: process.env.MONITORING_REDIS_HOST ?? "localhost",
-            port: +process.env.MONITORING_REDIS_PORT ?? 6379,
-          },
-          defaultJobOptions: {
-            removeOnComplete: true,
-            timeout: 180 * 1000, // 3 minute
-            attempts: 5,
-            backoff: {
-              type: "fixed",
-              delay: 5000, // 5 seconds
-            },
-          },
-        }),
         PassportModule.register({ defaultStrategy: "jwt" }),
         JwtModule.register({ secret: process.env.MONITORING_JWT_SECRET }),
       ],
