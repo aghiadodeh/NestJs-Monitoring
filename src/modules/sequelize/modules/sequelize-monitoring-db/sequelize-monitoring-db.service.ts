@@ -20,7 +20,7 @@ export class SequelizeMonitoringDbService {
       const tables = ["`monitoring_request_logs`", "`monitoring_job_logs`", "`monitoring_db_logs`"];
       if (!tables.find((e) => sql.includes(e))) {
         if (process.env.MONITORING_DB_LOG_ENABLED == "true") {
-          console.log("\x1B[0;36mSequelize:\x1B[0m:", sql, "\n---------------------");
+          console.log("\x1B[0;36mSequelize\x1B[0m:", sql, "\n---------------------");
         }
 
         if (process.env.MONITORING_DB_LOG_SAVE_ENABLED == "true") {

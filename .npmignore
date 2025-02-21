@@ -6,3 +6,6 @@ src/
 client/
 temp/
 .vscode
+tsconfig.json
+.prettierrc
+scripts

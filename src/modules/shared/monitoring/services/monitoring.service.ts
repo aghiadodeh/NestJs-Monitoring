@@ -47,7 +47,7 @@ export abstract class MonitoringService {
     const toDate = moment(endDate);
     const diff = toDate.diff(fromDate, type);
 
-    const range = [];
+    const range: Date[] = [];
     for (let i = 0; i < diff; i++) {
       range.push(moment(startDate).add(i, type).toDate());
     }

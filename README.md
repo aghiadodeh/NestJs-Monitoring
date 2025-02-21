@@ -1,11 +1,8 @@
 # NestJs Monitoring
 Debug assistant for the **NestJS** framework. It provides insight into the **Requests** coming into your application, **Exceptions**, **Database queries** and **Jobs**
 
-## NOTE:
-- This Package works only with ***Mongoose*** and ***Sequelize***.
 
 ## Screenshots:
-
 | | |
 |:-------------------------:|:-------------------------:|
 |<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Analyze.png?raw=true">|<img src="https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard/blob/main/screenshots/Requests.png?raw=true">
@@ -20,8 +17,9 @@ npm i nestjs-monitoring
 
 ## Usage:
 **NestJs Monitoring** provide debugging through ***apis***, You can use it by:
-1. Use built-in package dashboard by accessing: `http://localhost:3000/monitoring`.
-2. Clone [Monitoring-Dashboard](https://github.com/aghiadodeh/Nestjs-Monitoring-Dashboard) from Github which built specifically for this package.
+
+* Use built-in package dashboard by accessing: `http://localhost:3000/monitoring`.
+* Create your own dashboard using monitoring REST-APIs
 
 
 ## Setup:
@@ -117,7 +115,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
 
 @Module({
   imports: [
-    EventEmitterModule.forRoot(),
+    EventEmitterModule.forRoot(), // <-- add event-emitter
     MongooseModule.forRoot(process.env.MONGO_DB_URL, {
       user: process.env.DB_USERNAME,
       pass: process.env.DB_PASSWORD,
