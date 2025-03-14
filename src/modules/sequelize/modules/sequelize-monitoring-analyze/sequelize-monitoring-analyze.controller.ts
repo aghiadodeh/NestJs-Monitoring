@@ -10,7 +10,7 @@ import { SequelizeDBLog } from "../../entities/sequelize-log.entity";
 import { SequelizeJobLog } from "../../entities/job-log.entity";
 import { MonitoringJobFilterDto } from "../../../../modules/shared/monitoring/dtos/jobs-filter.dto";
 
-@Controller({ path: "monitoring/sequelize", version: '' })
+@Controller({ path: "api/monitoring/sequelize", version: '' })
 @UseGuards(MonitoringAuthenticationGuard)
 export class SequelizeMonitoringAnalyzeController {
   constructor(

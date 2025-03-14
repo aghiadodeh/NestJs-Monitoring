@@ -58,25 +58,6 @@ MONITORING_REDIS_HOST="localhost"
 MONITORING_REDIS_PORT=6379
 ```
 
-And you must use the Monitoring `GlobalFilters` and `GlobalPrefix` in your `src/main.ts`:
-```typescript
-import { MonitoringExceptionFilter } from "nestjs-monitoring";
-
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-
-  // add monitoring exception-filter
-  app.useGlobalFilters(new MonitoringExceptionFilter());
-
-  // global prefix `/api` is required
-  app.setGlobalPrefix("/api");
-
-  await app.listen(3000);
-}
-
-bootstrap();
-```
-
 ## Access Monitoring Dashboard:
 You can open built-in monitoring dashboard through
 
@@ -112,6 +93,7 @@ add `MonitoringModule` to your `src/app.module.ts`:
 ```typescript
 import { MonitoringModule, mongooseTrackingPlugin } from "nestjs-monitoring";
 import { EventEmitterModule } from "@nestjs/event-emitter";
+import { Connection } from "mongoose";
 
 @Module({
   imports: [
@@ -120,7 +102,7 @@ import { EventEmitterModule } from "@nestjs/event-emitter";
       user: process.env.DB_USERNAME,
       pass: process.env.DB_PASSWORD,
       dbName: process.env.DB_NAME,
-      connectionFactory: (connection) => {
+      connectionFactory: (connection: Connection) => {
         connection.plugin(mongooseTrackingPlugin); // <-- add `mongooseTrackingPlugin` here for monitoring db
         return connection;
       }

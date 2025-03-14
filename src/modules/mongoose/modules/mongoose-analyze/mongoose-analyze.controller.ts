@@ -10,7 +10,7 @@ import { MongooseLog } from "../../entities/mongoose-log.entity";
 import { JobLog } from "../../entities/job-log.entity";
 import { MonitoringJobFilterDto } from "../../../../modules/shared/monitoring/dtos/jobs-filter.dto";
 
-@Controller({ path: "monitoring/mongoose", version: '' })
+@Controller({ path: "api/monitoring/mongoose", version: '' })
 @UseGuards(MonitoringAuthenticationGuard)
 export class MongooseAnalyzeController {
   constructor(private readonly mongooseAnalyzeService: MongooseAnalyzeService) { }
